@@ -470,7 +470,7 @@ type Part struct {
 
 	// Type: "step-start" - No additional fields
 
-	isComplete bool `json:"-"` // Internal accumulator tracking
+	isComplete bool // Internal accumulator tracking
 }
 
 type Tool struct {

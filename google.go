@@ -18,7 +18,7 @@ type GoogleStreamIterator interface {
 }
 
 func ToolsToGoogle(tools []Tool) ([]*genai.Tool, error) {
-	functionDeclarations := []*genai.FunctionDeclaration{}
+	functionDeclarations := make([]*genai.FunctionDeclaration, 0, len(tools))
 
 	var propertyToSchema func(property map[string]any) (*genai.Schema, error)
 	propertyToSchema = func(property map[string]any) (*genai.Schema, error) {
