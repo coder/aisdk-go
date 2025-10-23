@@ -12,7 +12,7 @@ import (
 
 // ToolsToOpenAI converts the tool format to OpenAI's API format.
 func ToolsToOpenAI(tools []Tool) []openai.ChatCompletionToolParam {
-	openaiTools := []openai.ChatCompletionToolParam{}
+	openaiTools := make([]openai.ChatCompletionToolParam, len(tools))
 	for _, tool := range tools {
 		var schemaParams map[string]any
 		if tool.Schema.Properties != nil {

@@ -55,7 +55,7 @@ func MessagesToAnthropic(messages []Message) ([]anthropic.MessageParam, []anthro
 
 	for _, message := range messages {
 		role := anthropic.MessageParamRoleAssistant
-		content := []anthropic.ContentBlockParamUnion{}
+		var content []anthropic.ContentBlockParamUnion
 
 		switch message.Role {
 		case "system":
@@ -106,7 +106,7 @@ func MessagesToAnthropic(messages []Message) ([]anthropic.MessageParam, []anthro
 					})
 					content = nil
 
-					resultContent := []anthropic.ToolResultBlockParamContentUnion{}
+					var resultContent []anthropic.ToolResultBlockParamContentUnion
 					resultParts, err := toolResultToParts(part.ToolInvocation.Result)
 					if err != nil {
 						return nil, nil, fmt.Errorf("failed to convert tool call result to parts: %w", err)
@@ -207,13 +207,15 @@ func MessagesToAnthropic(messages []Message) ([]anthropic.MessageParam, []anthro
 // AnthropicToDataStream pipes an Anthropic stream to a DataStream.
 func AnthropicToDataStream(stream *ssestream.Stream[anthropic.MessageStreamEventUnion]) DataStream {
 	return func(yield func(DataStreamPart, error) bool) {
-		var lastChunk *anthropic.MessageStreamEventUnion
-		var finalReason FinishReason = FinishReasonUnknown
-		var finalUsage Usage
-		var currentToolCall struct {
-			ID   string
-			Args string
-		}
+		var (
+			lastChunk       *anthropic.MessageStreamEventUnion
+			finalReason     = FinishReasonUnknown
+			finalUsage      Usage
+			currentToolCall struct {
+				ID   string
+				Args string
+			}
+		)
 
 		for stream.Next() {
 			chunk := stream.Current()
